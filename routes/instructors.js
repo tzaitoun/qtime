@@ -3,6 +3,7 @@ const Joi = require('joi');
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const admin = require('firebase-admin');
 
 router.post('/', auth, async (req, res) => {
     const { error } = validate(req);
@@ -10,6 +11,8 @@ router.post('/', auth, async (req, res) => {
 
     let instructor = await Instructor.findOne({ userId: req.uId });
     if (instructor) return res.status(400).json({ message: 'User is already registered' });
+
+    await admin.auth().setCustomUserClaims(req.uid, { role: 1 });
 
     instructor = new Instructor({
         userId: req.uId,
