@@ -5,7 +5,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 
 router.post('/', auth, async (req, res) => {
-    const { error } = validate(req);
+    const { error } = validate(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     let student = await Student.findOne({ userId: req.uId });
@@ -13,10 +13,10 @@ router.post('/', auth, async (req, res) => {
 
     student = new Student({
         userId: req.uId,
-        firstName: req.firstName,
-        lastName: req.lastName,
-        studentId: req.studentId,
-        university: req.university
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        studentId: req.body.studentId,
+        university: req.body.university
     });
 
     await student.save();
