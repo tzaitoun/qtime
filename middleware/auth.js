@@ -1,8 +1,11 @@
 const admin = require('firebase-admin');
 
 module.exports = function(req, res, next) {
-    // The header should have the following form: Bearer idToken
-    const idToken = req.header('Authorization').split(" ")[1];
+    
+    const authHeader = req.header('Authorization');
+    if (!authHeader.startsWith('Bearer ')) return res.status(401).json({ message: 'Access Denied: No token provided' });
+
+    const idToken = authHeader.split(' ')[1];
     if (!idToken) return res.status(401).json({ message: 'Access Denied: No token provided' });
     
     admin.auth().verifyIdToken(idToken)

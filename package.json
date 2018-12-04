@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "jest": {
+    "verbose": true,
+    "testPathIgnorePatterns": ["tests/integration/registeration"],
+    "testEnvironment": "node"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --runInBand"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +18,12 @@
     "express": "^4.16.4",
     "firebase-admin": "^6.3.0",
     "joi": "^14.3.0",
-    "mongoose": "^5.3.14"
+    "mongoose": "^5.3.14",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0",
+    "supertest": "^3.3.0"
   }
 }
