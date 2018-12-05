@@ -5,7 +5,9 @@
   "main": "index.js",
   "jest": {
     "verbose": true,
-    "testPathIgnorePatterns": ["tests/integration/registeration"],
+    "testPathIgnorePatterns": [
+      "tests/integration/registeration"
+    ],
     "testEnvironment": "node"
   },
   "scripts": {
@@ -20,7 +22,8 @@
     "joi": "^14.3.0",
     "mongoose": "^5.3.14",
     "request": "^2.88.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "shortid": "^2.2.14"
   },
   "devDependencies": {
     "jest": "^23.6.0",

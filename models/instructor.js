@@ -1,6 +1,26 @@
 const mongoose = require('mongoose');
 
-const schema = new mongoose.Schema({
+const courseSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        minlength: 1,
+        maxlength: 30
+    },
+    code: {
+        type: String,
+        minlength: 1,
+        maxlength: 30
+    },
+    joinCode: {
+        type: String,
+        required: true,
+        minlength: 1,
+        maxlength: 30
+    }
+});
+
+const instructorSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true,
@@ -23,9 +43,10 @@ const schema = new mongoose.Schema({
         required: true,
         minlength: 1,
         maxlength: 30
-    }
+    },
+    courses: [courseSchema]
 });
 
-const Instructor = mongoose.model('Instructor', schema);
+const Instructor = mongoose.model('Instructor', instructorSchema);
 
 module.exports = Instructor;

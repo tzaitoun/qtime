@@ -11,7 +11,7 @@ router.post('/', auth, async (req, res) => {
 
     await admin.auth().setCustomUserClaims(req.uId, { role: 0 });
 
-    student = new Student({
+    let student = new Student({
         userId: req.uId,
         firstName: value.firstName,
         lastName: value.lastName,
