@@ -1,30 +1,9 @@
 const mongoose = require('mongoose');
 
-const courseSchema = new mongoose.Schema({
-    name: {
+const schema = new mongoose.Schema({
+    _id: {
         type: String,
-        required: true,
-        minlength: 1,
-        maxlength: 30
-    },
-    code: {
-        type: String,
-        minlength: 1,
-        maxlength: 30
-    },
-    joinCode: {
-        type: String,
-        required: true,
-        minlength: 1,
-        maxlength: 30
-    }
-});
-
-const instructorSchema = new mongoose.Schema({
-    userId: {
-        type: String,
-        required: true,
-        index: true
+        required: true
     },
     firstName: {
         type: String,
@@ -44,9 +23,11 @@ const instructorSchema = new mongoose.Schema({
         minlength: 1,
         maxlength: 30
     },
-    courses: [courseSchema]
+    courses: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }]
+    }
 });
 
-const Instructor = mongoose.model('Instructor', instructorSchema);
+const Instructor = mongoose.model('Instructor', schema);
 
 module.exports = Instructor;

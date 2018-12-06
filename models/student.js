@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-    userId: {
+    _id: {
         type: String,
-        required: true,
-        index: true
+        required: true
     },
     firstName: {
         type: String,
@@ -29,6 +28,9 @@ const schema = new mongoose.Schema({
         required: true,
         minlength: 1,
         maxlength: 30
+    },
+    courses: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }]
     }
 });
 

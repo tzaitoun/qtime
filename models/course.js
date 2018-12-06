@@ -1,5 +1,24 @@
 const mongoose = require('mongoose');
 
+const courseOwnerSchema = new mongoose.Schema({
+    _id: {
+        type: String,
+        required: true
+    },
+    firstName: {
+        type: String,
+        required: true,
+        minlength: 1,
+        maxlength: 30
+    },
+    lastName: {
+        type: String,
+        required: true,
+        minlength: 1,
+        maxlength: 30
+    }
+});
+
 const schema = new mongoose.Schema({
     name: {
         type: String,
@@ -18,12 +37,7 @@ const schema = new mongoose.Schema({
         minlength: 1,
         maxlength: 30
     },
-    instructors: {
-        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Instructor' }]
-    },
-    students: {
-        type: [{ type: mongoose.Schema.Types.ObjectId }]
-    }
+    courseOwner: courseOwnerSchema
 });
 
 const Course = mongoose.model('Course', schema);
