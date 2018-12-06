@@ -10,12 +10,15 @@ router.post('/', auth, async (req, res) => {
     if (error) return res.status(400).json({ status_message: 'Bad Request: ' + error.details[0].message });
 
     await admin.auth().setCustomUserClaims(req.uId, { role: 1 });
+    
+    const user = await admin.auth().getUser(req.uId);
 
     let instructor = new Instructor({
         _id: req.uId,
         firstName: value.firstName,
         lastName: value.lastName,
-        university: value.university
+        university: value.university,
+        email: user.email
     });
 
     await instructor.save();

@@ -29,6 +29,12 @@ const schema = new mongoose.Schema({
         minlength: 1,
         maxlength: 30
     },
+    email: {
+        type: String,
+        required: true,
+        minlength: 1,
+        maxlength: 30
+    },
     courses: {
         type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }]
     }

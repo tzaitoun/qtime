@@ -11,12 +11,15 @@ router.post('/', auth, async (req, res) => {
 
     await admin.auth().setCustomUserClaims(req.uId, { role: 0 });
 
+    const user = await admin.auth().getUser(req.uId);
+
     let student = new Student({
         _id: req.uId,
         firstName: value.firstName,
         lastName: value.lastName,
         studentId: value.studentId,
-        university: value.university
+        university: value.university,
+        email: user.email
     });
 
     await student.save();
