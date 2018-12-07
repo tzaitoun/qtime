@@ -1,6 +1,8 @@
 const admin = require('firebase-admin');
 
-/* This middleware function is used to verify that a user is a student when accessing instructor-only resources */
+/* This middleware function is used to verify that a user is a student when accessing student-only resources.
+ * Admins also have full access.
+ */
 module.exports = function(req, res, next) {
     
     // The header has to be formatted as Bearer token in the Authorization header: Bearer idToken 
@@ -14,15 +16,15 @@ module.exports = function(req, res, next) {
     admin.auth().verifyIdToken(idToken)
         .then(function(decodedToken) {
             
-            if (!(decodedToken.role === 0)) {
+            if (!(decodedToken.role === 0 || decodedToken.role === 2)) {
                 return res.status(403).json({ status_message: 'Forbidden: You do not have permission to access this resource' });
             }
             
-            const uId = decodedToken.uid;
-            req.uId = uId;
+            req.uId = decodedToken.uid;
+            req.role = decodedToken.role;
             next();
         })
         .catch(function(error) {
-            return res.status(400).json({ status_message: 'Bad Request: Invalid token' });
+            return res.set('WWW-Authenticate', 'Bearer realm="/"').status(401).json({ status_message: 'Unauthorized: Invalid token' });
         });
 }

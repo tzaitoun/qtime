@@ -1,12 +1,14 @@
-const Course = require('../models/course');
-const Instructor = require('../models/instructor');
-const Student = require('../models/student');
-const Joi = require('joi');
-const express = require('express');
-const router = express.Router();
+const { Course, validate } = require('../models/course');
+const { Instructor } = require('../models/instructor');
+const { Student } = require('../models/student');
+
 const authInstructor = require('../middleware/authInstructor');
 const authStudent = require('../middleware/authStudent');
+
+const Joi = require('joi');
 const shortid = require('shortid');
+const express = require('express');
+const router = express.Router();
 
 router.post('/', authInstructor, async (req, res) => {
     const { error, value } = validate(req.body);
@@ -42,7 +44,7 @@ router.post('/join', authStudent, async (req, res) => {
     const joinCode = value.joinCode;
     if (!shortid.isValid(joinCode)) return res.status(400).json({ status_message: 'Bad Request: Invalid join code' });
     
-    const course = await Course.findOne({ joinCode: joinCode });
+    const course = await Course.findOne({ joinCode: joinCode }).select('-joinCode');
     if (!course) return res.status(400).json({ status_message: 'Bad Request: Invalid join code' });
 
     const student = await Student.findById(req.uId);
@@ -56,23 +58,8 @@ router.post('/join', authStudent, async (req, res) => {
     student.courses.push(course._id);
     await student.save();
 
-    return res.status(200).json({ 
-        status_message: 'Success',
-        _id: course._id,
-        name: course.name,
-        code: course.code,
-        courseOwner: course.courseOwner
-    });
+    return res.status(200).json({ status_message: 'Success', course: course });
 });
-
-function validate(req) {
-    const schema = {
-        name: Joi.string().trim().min(1).max(30).required(),
-        code: Joi.string().trim().min(1).max(30)
-    };
-
-    return Joi.validate(req, schema);
-}
 
 function validateJoinCourse(req) {
     const schema = {

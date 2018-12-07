@@ -1,10 +1,12 @@
-const Instructor = require('../models/instructor');
-const Joi = require('joi');
+const { Instructor, validate } = require('../models/instructor');
+
+const auth = require('../middleware/auth');
+
+const admin = require('firebase-admin');
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
-const admin = require('firebase-admin');
 
+/* This endpoint is for creating a new instructor on our database and setting the instructor permission */
 router.post('/', auth, async (req, res) => {
     const { error, value } = validate(req.body);
     if (error) return res.status(400).json({ status_message: 'Bad Request: ' + error.details[0].message });
@@ -24,15 +26,5 @@ router.post('/', auth, async (req, res) => {
     await instructor.save();
     return res.status(200).json({ status_message: 'Success' });
 });
-
-function validate(req) {
-    const schema = {
-        firstName: Joi.string().trim().min(1).max(30).required(),
-        lastName: Joi.string().trim().min(1).max(30).required(),
-        university: Joi.string().trim().min(1).max(30).required()
-    };
-
-    return Joi.validate(req, schema);
-}
 
 module.exports = router;

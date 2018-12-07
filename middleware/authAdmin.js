@@ -1,10 +1,8 @@
 const admin = require('firebase-admin');
 
-/* This middleware function is only used in the creation of new users. Once they create their account using firebase authentication, 
- * they use an idToken to create either a student or instructor "account" on our database.
- */
+/* This middleware function is used to verify that a user is an admin when accessing admin-only resources. */
 module.exports = function(req, res, next) {
-    
+
     // The header has to be formatted as Bearer token in the Authorization header: Bearer idToken 
     const authHeader = req.header('Authorization');
     if (!authHeader.startsWith('Bearer ')) return res.status(400).json({ status_message: 'Bad Request: Invalid header' });
@@ -12,10 +10,16 @@ module.exports = function(req, res, next) {
     const idToken = authHeader.split(' ')[1];
     if (!idToken) return res.status(400).json({ status_message: 'Bad Request: Invalid header' });
     
-    // Verify the token and store the firebase user id in the request 
+    // Verify the token, check that the user is an instructor, and store the firebase user id in the request 
     admin.auth().verifyIdToken(idToken)
         .then(function(decodedToken) {
+            
+            if (!(decodedToken.role === 2)) {
+                return res.status(403).json({ status_message: 'Forbidden: You do not have permission to access this resource' });
+            }
+            
             req.uId = decodedToken.uid;
+            req.role = decodedToken.role;
             next();
         })
         .catch(function(error) {

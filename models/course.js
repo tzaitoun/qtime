@@ -42,4 +42,14 @@ const schema = new mongoose.Schema({
 
 const Course = mongoose.model('Course', schema);
 
-module.exports = Course;
+function validate(req) {
+    const schema = {
+        name: Joi.string().trim().min(1).max(30).required(),
+        code: Joi.string().trim().min(1).max(30)
+    };
+
+    return Joi.validate(req, schema);
+}
+
+module.exports.Course = Course;
+module.exports.validate = validate;

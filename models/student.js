@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Joi = require('joi');
 
 const schema = new mongoose.Schema({
     _id: {
@@ -42,4 +43,16 @@ const schema = new mongoose.Schema({
 
 const Student = mongoose.model('Student', schema);
 
-module.exports = Student;
+function validate(req) {
+    const schema = {
+        firstName: Joi.string().trim().min(1).max(30).required(),
+        lastName: Joi.string().trim().min(1).max(30).required(),
+        studentId: Joi.string().trim().min(1).max(30).required(),
+        university: Joi.string().trim().min(1).max(30).required()
+    };
+
+    return Joi.validate(req, schema);
+}
+
+module.exports.Student = Student;
+module.exports.validate = validate;
