@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Joi = require('joi');
 
 const courseOwnerSchema = new mongoose.Schema({
     _id: {
