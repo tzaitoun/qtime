@@ -6,6 +6,7 @@ const authInstructor = require('../middleware/authInstructor');
 const authStudent = require('../middleware/authStudent');
 
 const questionsRouter = require('../routes/questions');
+const classroomRouter = require('../routes/classroom');
 
 const Joi = require('joi');
 const shortid = require('shortid');
@@ -13,6 +14,7 @@ const express = require('express');
 const router = express.Router();
 
 router.use('/:courseId/q', questionsRouter);
+router.use('/:courseId/classroom', classroomRouter);
 
 router.post('/', authInstructor, async (req, res) => {
     const { error, value } = validate(req.body);

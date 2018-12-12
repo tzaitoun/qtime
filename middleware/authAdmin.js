@@ -5,7 +5,7 @@ module.exports = function(req, res, next) {
 
     // The header has to be formatted as Bearer token in the Authorization header: Bearer idToken 
     const authHeader = req.header('Authorization');
-    if (!authHeader.startsWith('Bearer ')) return res.status(400).json({ status_message: 'Bad Request: Invalid header' });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return res.status(400).json({ status_message: 'Bad Request: Invalid header' });
 
     const idToken = authHeader.split(' ')[1];
     if (!idToken) return res.status(400).json({ status_message: 'Bad Request: Invalid header' });
