@@ -2,20 +2,26 @@ const { Student, validate } = require('../models/student');
 
 const auth = require('../middleware/auth');
 
+const meRouter = require('./studentsMe');
+
 const admin = require('firebase-admin');
 const express = require('express');
 const router = express.Router();
 
-/* This endpoint is for creating a new student on our database and setting the student permission */
-router.post('/', auth, async (req, res) => {
+router.use('/me', meRouter);
+
+/* This endpoint is for signing up a new student on our database and setting the student permission */
+router.post('/signup', auth, async (req, res) => {
     const { error, value } = validate(req.body);
     if (error) return res.status(400).json({ status_message: 'Bad Request: ' + error.details[0].message });
 
+    // Sign up the user as a student
     await admin.auth().setCustomUserClaims(req.uId, { role: 0 });
 
+    // Get user details from firebase
     const user = await admin.auth().getUser(req.uId);
 
-    let student = new Student({
+    const student = new Student({
         _id: req.uId,
         firstName: value.firstName,
         lastName: value.lastName,

@@ -52,5 +52,14 @@ function validate(req) {
     return Joi.validate(req, schema);
 }
 
+function validateJoinCourse(req) {
+    const schema = {
+        joinCode: Joi.string().trim().min(1).max(30).required()
+    }
+
+    return Joi.validate(req, schema);
+}
+
 module.exports.Course = Course;
 module.exports.validate = validate;
+module.exports.validateJoinCourse = validateJoinCourse;

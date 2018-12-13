@@ -1,9 +1,12 @@
+const authSocket = require('./middleware/authSocket');
+
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 
 const io = require('socket.io')(server);
-const nsp = io.of('/^\/courses\/[a-f\d]{24}\/classroom$/');
+const nsp = io.of(/^\/courses\/[a-f\d]{24}\/classroom$/);
+nsp.use(authSocket);
 
 require('./startup/firebaseAuth')();
 require('./startup/db')();

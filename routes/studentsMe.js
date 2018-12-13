@@ -7,12 +7,14 @@ const admin = require('firebase-admin');
 const express = require('express');
 const router = express.Router();
 
+/* Gets the details of the current student */
 router.get('/', authStudent, async (req, res) => {
 
     const me = await Student.findById(req.uId).select('-_id -email -courses');
     return res.status(200).json({ status_message: 'Success', me: me });
 });
 
+/* Edits the details of the current student */
 router.put('/', authStudent, async (req, res) => {
     const { error, value } = validate(req.body);
     if (error) return res.status(400).json({ status_message: 'Bad Request: ' + error.details[0].message });
@@ -30,6 +32,7 @@ router.put('/', authStudent, async (req, res) => {
     return res.status(200).json({ status_message: 'Success', me: me });
 });
 
+/* Deletes the account of the current user */
 router.delete('/', authStudent, async (req, res) => {
 
     await Student.findByIdAndDelete(req.uId);
@@ -38,6 +41,7 @@ router.delete('/', authStudent, async (req, res) => {
     return res.status(200).json({ status_message: 'Success' });
 });
 
+/* Gets the courses of the current user */
 router.get('/courses', authStudent, async (req, res) => {
 
     const me = await Student.findById(req.uId);

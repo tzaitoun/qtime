@@ -11,9 +11,7 @@ module.exports = function(app, nsp) {
         req.nsp = nsp;
         next();
     });
-    app.use('/students/me', studentsMe);
     app.use('/students', students);
-    app.use('/instructors/me', instructorsMe);
     app.use('/instructors', instructors);
     app.use('/courses', courses);
 }

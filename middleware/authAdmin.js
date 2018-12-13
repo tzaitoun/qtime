@@ -10,7 +10,7 @@ module.exports = function(req, res, next) {
     const idToken = authHeader.split(' ')[1];
     if (!idToken) return res.status(400).json({ status_message: 'Bad Request: Invalid header' });
     
-    // Verify the token, check that the user is an instructor, and store the firebase user id in the request 
+    // Verify the token, check that the user is an admin, and store the firebase user id in the request 
     admin.auth().verifyIdToken(idToken)
         .then(function(decodedToken) {
             
