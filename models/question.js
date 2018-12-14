@@ -28,9 +28,13 @@ const schema = new mongoose.Schema({
     },
     course: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Course' 
+        ref: 'Course',
+        required: true
     },
-    questionDetails: mongoose.Schema.Types.Mixed,
+    questionDetails: {
+        type: mongoose.Schema.Types.Mixed,
+        required: true
+    }
 });
 
 const Question = mongoose.model('Question', schema);
