@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
+/* This model represents a student and is used to keep track of their details and the courses that they are enrolled in */
 const schema = new mongoose.Schema({
     _id: {
         type: String,

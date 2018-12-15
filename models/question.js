@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
+/* This model represents a question, all questions have the same data except for the question details which is dependent
+ * on the type of the question.
+ */
 const schema = new mongoose.Schema({
     title: {
         type: String,
@@ -52,6 +55,18 @@ function validate(req) {
     return Joi.validate(req, schema);
 }
 
+/* Each question type will have a different question details, so this function is used to validate each question type */
+function validateQuestionType(questionType, questionDetails) {
+    switch(questionType) {
+        case 'Fill in the Blanks':
+            return validateFIB(questionDetails);
+        case 'Multiple Choice':
+            return validateMultipleChoice(questionDetails);
+        case 'NumericAnswer':
+            return validateNumericAnswer(questionDetails);
+    } 
+}
+
 function validateFIB(questionDetails) {
     const schema = {
         answers: Joi.array().items(Joi.string().required()),
@@ -79,6 +94,4 @@ function validateNumericAnswer(questionDetails) {
 
 module.exports.Question = Question;
 module.exports.validate = validate;
-module.exports.validateFIB = validateFIB;
-module.exports.validateMultipleChoice = validateMultipleChoice;
-module.exports.validateNumericAnswer = validateNumericAnswer;
+module.exports.validateQuestionType = validateQuestionType;

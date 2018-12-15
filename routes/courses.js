@@ -8,7 +8,6 @@ const authStudent = require('../middleware/authStudent');
 const questionsRouter = require('../routes/questions');
 const classroomRouter = require('../routes/classroom');
 
-const Joi = require('joi');
 const shortid = require('shortid');
 const express = require('express');
 const router = express.Router();

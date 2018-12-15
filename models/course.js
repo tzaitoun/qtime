@@ -1,25 +1,10 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const courseOwnerSchema = require('./courseOwner');
 
-const courseOwnerSchema = new mongoose.Schema({
-    _id: {
-        type: String,
-        required: true
-    },
-    firstName: {
-        type: String,
-        required: true,
-        minlength: 1,
-        maxlength: 30
-    },
-    lastName: {
-        type: String,
-        required: true,
-        minlength: 1,
-        maxlength: 30
-    }
-});
-
+/* The Course model represents a course. Each course has an owner which is the instructor who created the course. 
+ * The "joinCode" is what students use to join a course and it acts as a second unique identifier of the course.
+ */
 const schema = new mongoose.Schema({
     name: {
         type: String,

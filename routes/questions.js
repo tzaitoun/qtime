@@ -1,5 +1,4 @@
-const { Question, validate } = require('../models/question');
-const { validateFIB, validateMultipleChoice, validateNumericAnswer } = require('../models/question');
+const { Question, validate, validateQuestionType } = require('../models/question');
 
 const authInstructor = require('../middleware/authInstructor');
 const authCourse = require('../middleware/authCourse');
@@ -13,7 +12,7 @@ router.post('/', [authInstructor, authCourse], async (req, res) => {
     if (error) return res.status(400).json({ status_message: 'Bad Request: ' + error.details[0].message });
 
     // This validates the question details depending on the type of the question
-    const questionDetails = validateQuestionType(req.body.type, req.body.questionDetails);
+    const questionDetails = validateQuestionType(value.type, value.questionDetails);
     if (questionDetails.error) return res.status(400).json({ status_message: 'Bad Request: ' + questionDetails.error.details[0].message });
 
     const question = new Question({
@@ -30,17 +29,5 @@ router.post('/', [authInstructor, authCourse], async (req, res) => {
 
     return res.status(200).json({ status_message: 'Success', question: question });
 });
-
-/* Each question type will have a different question details, so this function is used to validate each question type */
-function validateQuestionType(questionType, questionDetails) {
-    switch(questionType) {
-        case 'Fill in the Blanks':
-            return validateFIB(questionDetails);
-        case 'Multiple Choice':
-            return validateMultipleChoice(questionDetails);
-        case 'NumericAnswer':
-            return validateNumericAnswer(questionDetails);
-    } 
-}
 
 module.exports = router;

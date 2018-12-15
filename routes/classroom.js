@@ -10,7 +10,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 
 /* This endpoint allows an instructor to deploy a question in real-time to the classroom. The question will be sent to all students
- * who subscribed to the "question" event.
+ * who subscribed to the "question" event. It also creates/updates the metadata of the classroom.
  */
 router.post('/', [authInstructor, authCourse], async (req, res) => {
     const { error, value } = validate(req.body);
@@ -23,7 +23,7 @@ router.post('/', [authInstructor, authCourse], async (req, res) => {
     }
 
     // Check if this question belongs to the course
-    if (question.course != req.params.courseId) {
+    if (question.course != req.course._id) {
         return res.status(403).json({ status_message: 'Forbidden: You do not have permission to access this question' });
     }
 
@@ -48,19 +48,31 @@ router.post('/', [authInstructor, authCourse], async (req, res) => {
     return res.status(200).json({ status_message: 'Success', question: question });
 });
 
+/* This endpoint allows the instructor to stop accepting answers for a question. It also updates the metadata of the classroom,
+ * it puts the classroom in an inactive state and resets the studentsAnswered field. It also makes the grades for the question
+ * available to the students.
+ */
 router.post('/close', [authInstructor, authCourse], async (req, res) => {
+    
+    // Put the classroom in the inactive state and reset all fields
     const classroom = Classroom.findByIdAndUpdate(req.course._id, 
         {
             $set: {
                 active: false,
-                studentsAnswered: 0
+                studentsAnswered: 0,
             }
         }
     );
 
+    // Make the marks/answers avaiable to students 
+    await Answer.updateMany({ question: classroom.question._id }, { $set: { available: true } });
+
     return res.status(200).json({ status_message: 'Success' });
 });
 
+/* This endpoint allows students to submit their answer (they can also change their answer). It also marks the answer
+ * and notifies the instructors in the classroom that a student has submited an asnwer.
+ */
 router.post('/answer', [authStudent, authCourse], async (req, res) => {
     const { error, value } = validateAnswer(req.body);
     if (error) return res.status(400).json({ status_message: 'Bad Request: ' + error.details[0].message });
@@ -72,12 +84,12 @@ router.post('/answer', [authStudent, authCourse], async (req, res) => {
     }
 
     // Check if this question belongs to the course
-    if (question.course != req.params.courseId) {
+    if (question.course != req.course._id) {
         return res.status(403).json({ status_message: 'Forbidden: You do not have permission to access this question' });
     }
 
     // Check if the question is still active in the classroom
-    const classroom = await Classroom.findById(req.params.courseId);
+    const classroom = await Classroom.findById(req.course._id);
 
     if (!classroom.active || !classroom.question._id.equals(question._id)) {
         return res.status(403).json({ status_message: 'Forbidden: You can no longer answer this question' });
@@ -107,6 +119,7 @@ router.post('/answer', [authStudent, authCourse], async (req, res) => {
          });
          await studentAnswer.save();
 
+         // If this is the first time submitting an answer, increment studentAnswered and notify the instructors 
          classroom.studentsAnswered++;
          await classroom.save();
          req.nsp.to('instructors').emit('answer', classroom.studentsAnswered);

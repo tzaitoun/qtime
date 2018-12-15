@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
+/* This model represents a student's answer and mark to a question. The "available" field determines if the mark should be visible 
+ * to the student in the grades section.
+ */
 const schema = new mongoose.Schema({
     student: {
         type: String,
@@ -45,6 +48,20 @@ function validateAnswer(req) {
     return Joi.validate(req, schema);
 }
 
+/* Each question type will have a different answer structure, so this function is used to validate each answer type. These are 
+ * used to validate the incoming request.
+ */
+function validateAnswerType(question, answer) {
+    switch(question.type) {
+        case 'Fill in the Blanks':
+            return validateFIB(answer, question.questionDetails);
+        case 'Multiple Choice':
+            return validateMultipleChoice(answer, question.questionDetails);
+        case 'NumericAnswer':
+            return validateNumericAnswer(answer);
+    } 
+}
+
 function validateFIB(answer, questionDetails) {
     const schema = {
         answers: Joi.array().items(Joi.string()).length(questionDetails.answers.length).required(),
@@ -69,18 +86,7 @@ function validateNumericAnswer(answer) {
     return Joi.validate(answer, schema);
 }
 
-/* Each question type will have a different answer structure, so this function is used to validate each answer type */
-function validateAnswerType(question, answer) {
-    switch(question.type) {
-        case 'Fill in the Blanks':
-            return validateFIB(answer, question.questionDetails);
-        case 'Multiple Choice':
-            return validateMultipleChoice(answer, question.questionDetails);
-        case 'NumericAnswer':
-            return validateNumericAnswer(answer);
-    } 
-}
-
+/* Each question type will have a different answer structure, so this function is used to calculate the mark for each answer type. */
 function calculateMark(question, answer) {
     switch(question.type) {
         case 'Fill in the Blanks':
