@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
-/* This model represents a student's answer and mark to a question. The "available" field determines if the mark should be visible 
- * to the student in the grades section.
- */
+/* This model represents a student's answer and grade to a question. */
 const schema = new mongoose.Schema({
     student: {
         type: String,
@@ -25,10 +23,6 @@ const schema = new mongoose.Schema({
     },
     participationMark: {
         type: Number,
-        required: true
-    },
-    available: {
-        type: Boolean,
         required: true
     },
     answer: {

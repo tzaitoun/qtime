@@ -7,6 +7,8 @@ const authStudent = require('../middleware/authStudent');
 
 const questionsRouter = require('../routes/questions');
 const classroomRouter = require('../routes/classroom');
+const studentGradesRouter = require('../routes/studentGrades');
+const courseStudentsRouter = require('../routes/courseStudents');
 
 const shortid = require('shortid');
 const express = require('express');
@@ -14,6 +16,8 @@ const router = express.Router();
 
 router.use('/:courseId/q', questionsRouter);
 router.use('/:courseId/classroom', classroomRouter);
+router.use('/:courseId/grades', studentGradesRouter);
+router.use('/:courseId/students', courseStudentsRouter);
 
 /* This endpoint is for the creation of a new course by an instructor */
 router.post('/', authInstructor, async (req, res) => {

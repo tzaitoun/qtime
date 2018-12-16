@@ -16,8 +16,8 @@ module.exports = function(nsp) {
         // If the user is a student (the middleware assigns users to groups/rooms)
         if (socket.rooms['students']) {
 
-            // If the classroom is active, emit the question to the student
-            if (classroom.active) {
+            // If the classroom exists and is active, emit the question to the student
+            if (classroom && classroom.active) {
                 socket.emit('question', classroom.question);
             }
         }

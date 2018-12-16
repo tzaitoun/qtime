@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 const Joi = require('joi');
 
 /* This model represents a question, all questions have the same data except for the question details which is dependent
- * on the type of the question.
+ * on the type of the question. The deployed field determines if the question has been deployed, which means that the 
+ * student got a chance to answer the question, so this field is used to determine if student should be able to see this
+ * question's grade.
  */
 const schema = new mongoose.Schema({
     title: {
@@ -28,6 +30,11 @@ const schema = new mongoose.Schema({
     participationMark: {
         type: Number,
         required: true
+    },
+    deployed: {
+        type: Boolean,
+        required: true,
+        default: false
     },
     course: { 
         type: mongoose.Schema.Types.ObjectId, 

@@ -23,7 +23,7 @@ router.post('/', [authInstructor, authCourse], async (req, res) => {
     }
 
     // Check if this question belongs to the course
-    if (question.course != req.course._id) {
+    if (!question.course.equals(req.course._id)) {
         return res.status(403).json({ status_message: 'Forbidden: You do not have permission to access this question' });
     }
 
@@ -64,8 +64,8 @@ router.post('/close', [authInstructor, authCourse], async (req, res) => {
         }
     );
 
-    // Make the marks/answers avaiable to students 
-    await Answer.updateMany({ question: classroom.question._id }, { $set: { available: true } });
+    // Find the queston and update the deployed field to indicate that the question had been answered by students
+    const question = await Question.findByIdAndUpdate(classroom.question._id, { $set: { deployed: true } });
 
     return res.status(200).json({ status_message: 'Success' });
 });
@@ -84,7 +84,7 @@ router.post('/answer', [authStudent, authCourse], async (req, res) => {
     }
 
     // Check if this question belongs to the course
-    if (question.course != req.course._id) {
+    if (!question.course.equals(req.course._id)) {
         return res.status(403).json({ status_message: 'Forbidden: You do not have permission to access this question' });
     }
 
@@ -114,7 +114,6 @@ router.post('/answer', [authStudent, authCourse], async (req, res) => {
              question: question._id,
              mark: mark,
              participationMark: question.participationMark,
-             available: false,
              answer: answer.value
          });
          await studentAnswer.save();
