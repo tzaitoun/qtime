@@ -3,7 +3,8 @@ const { Course } = require('../models/course');
 
 const authStudent = require('../middleware/authStudent');
 
-const admin = require('firebase-admin');
+const config = require('config');
+const admin = require(config.get('firebaseAdmin'));
 const express = require('express');
 const router = express.Router();
 

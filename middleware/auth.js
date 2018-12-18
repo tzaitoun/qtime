@@ -1,4 +1,5 @@
-const admin = require('firebase-admin');
+const config = require('config');
+const admin = require(config.get('firebaseAdmin'));
 
 /* This middleware function is only used in the creation of new users. Once they create their account using firebase authentication, 
  * they use an idToken to create either a student or instructor "account" on our database.

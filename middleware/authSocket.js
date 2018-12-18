@@ -1,7 +1,8 @@
 const { Instructor } = require('../models/instructor');
 const { Student } = require('../models/student');
 
-const admin = require('firebase-admin');
+const config = require('config');
+const admin = require(config.get('firebaseAdmin'));
 
 /* This middleware function is used to verify if the user attempting to connect to the /course/:courseId/classroom socket is a valid
  * user. It is also used to assign the user a socket.io room so events can be sent to a specific group of users.

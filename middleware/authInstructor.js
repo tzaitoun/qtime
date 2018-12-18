@@ -1,4 +1,5 @@
-const admin = require('firebase-admin');
+const config = require('config');
+const admin = require(config.get('firebaseAdmin'));
 
 /* This middleware function is used to verify that a user is an instructor when accessing instructor-only resources. 
  * Admins also have full access.
