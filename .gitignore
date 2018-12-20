@@ -1,2 +1,4 @@
 node_modules/
 qtime-firebase.json
+combined.log
+error.log
