@@ -1,5 +1,2 @@
 node_modules/
 qtime-firebase.json
-config/test.json
-tests
-testAccounts

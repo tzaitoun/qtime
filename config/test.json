@@ -1,0 +1,4 @@
+{
+    "db": "mongodb://localhost:27017/qtime_tests",
+    "firebaseAdmin": "../test/firebaseMockSetup"
+}
