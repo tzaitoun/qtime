@@ -4,7 +4,7 @@ const request = require('supertest');
 const mocksdk = require('../../firebaseMockSetup');
 const { expect } = require('chai');
 
-describe('instructors endpoint', () => {
+describe('instructors/signup endpoint', () => {
 
     let server;
     let token;
