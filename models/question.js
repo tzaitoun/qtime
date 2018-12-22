@@ -69,7 +69,7 @@ function validateQuestionType(questionType, questionDetails) {
             return validateFIB(questionDetails);
         case 'Multiple Choice':
             return validateMultipleChoice(questionDetails);
-        case 'NumericAnswer':
+        case 'Numeric Answer':
             return validateNumericAnswer(questionDetails);
     } 
 }
