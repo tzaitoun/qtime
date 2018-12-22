@@ -4,6 +4,7 @@ const { Student } = require('../models/student');
 
 const authInstructor = require('../middleware/authInstructor');
 const authStudent = require('../middleware/authStudent');
+const authCourse = require('../middleware/authCourse');
 
 const questionsRouter = require('../routes/questions');
 const classroomRouter = require('../routes/classroom');
@@ -47,7 +48,20 @@ router.post('/', authInstructor, async (req, res) => {
     instructor.courses.push(course._id);
     await instructor.save();
 
-    return res.status(200).json({ status_message: 'Success' });
+    return res.status(200).json({ status_message: 'Success', course: course });
+});
+
+/* This endpoint is for updating course information */
+router.put('/:courseId', [authInstructor, authCourse], async (req, res) => {
+    const { error, value } = validate(req.body);
+    if (error) return res.status(400).json({ status_message: 'Bad Request: ' + error.details[0].message });
+
+    const course = await Course.findByIdAndUpdate(req.course._id, { $set: {
+        name: value.name,
+        code: value.code
+    }}, { new: true });
+
+    return res.status(200).json({ status_message: 'Success', course: course });
 });
 
 /* This endpoint allows students to join a course by providing a join code */

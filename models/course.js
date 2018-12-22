@@ -14,6 +14,7 @@ const schema = new mongoose.Schema({
     },
     code: {
         type: String,
+        required: true,
         minlength: 1,
         maxlength: 30
     },
@@ -23,7 +24,10 @@ const schema = new mongoose.Schema({
         minlength: 1,
         maxlength: 30
     },
-    courseOwner: courseOwnerSchema
+    courseOwner: {
+        type: courseOwnerSchema,
+        required: true
+    }
 });
 
 const Course = mongoose.model('Course', schema);
@@ -31,7 +35,7 @@ const Course = mongoose.model('Course', schema);
 function validate(req) {
     const schema = {
         name: Joi.string().trim().min(1).max(30).required(),
-        code: Joi.string().trim().min(1).max(30)
+        code: Joi.string().trim().min(1).max(30).required()
     };
 
     return Joi.validate(req, schema);
