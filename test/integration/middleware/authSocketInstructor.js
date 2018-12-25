@@ -1,18 +1,15 @@
-const { Student } = require('../../../models/student');
 const { Instructor } = require('../../../models/instructor');
 const { Course } = require('../../../models/course');
 
-const request = require('supertest');
 const mocksdk = require('../../firebaseMockSetup');
 const { expect } = require('chai');
 const shortId = require('shortid');
 const io = require('socket.io-client');
 
-describe('authSocket Middleware when the user is a student', () => {
+describe('authSocket Middleware when the user is an instructor', () => {
 
     let server;
-    let studentToken;
-    let student;
+    let token;
     let instructor;
     let course;
 
@@ -21,7 +18,7 @@ describe('authSocket Middleware when the user is a student', () => {
         // Get the server object for the main test setup
         server = require('../../testSetup');
 
-        // Create a firebase user who will be a student
+        // Create a firebase user who will be an instructor
         mocksdk.auth().autoFlush();
         mocksdk.auth().createUser({
             uid: '123',
@@ -29,28 +26,16 @@ describe('authSocket Middleware when the user is a student', () => {
             password: 'student'
         });
 
-        // Assign the student role
-        mocksdk.auth().setCustomUserClaims('123', { role: 0 });
+        // Assign the instructor role
+        mocksdk.auth().setCustomUserClaims('123', { role: 1 });
 
         // Get the user's token
         const user = await mocksdk.auth().getUser('123');
-        studentToken = await user.getIdToken();
-
-        // Create a new student in our database
-        student = new Student({
-            _id: '123',
-            firstName: 'Student',
-            lastName: 'Test',
-            studentId: '123456789',
-            university: 'University of Test',
-            email: user.email
-        });
-
-        await student.save();
+        token = await user.getIdToken();
 
         // Create a new instructor and a new course for them
         instructor = new Instructor({
-            _id: '12345',
+            _id: '123',
             firstName: 'Instructor',
             lastName: 'Test',
             university: 'University of Test',
@@ -74,7 +59,6 @@ describe('authSocket Middleware when the user is a student', () => {
     });
 
     after(async () => {
-        await Student.deleteMany({});
         await Instructor.deleteMany({});
         await Course.deleteMany({});
     });
@@ -101,7 +85,7 @@ describe('authSocket Middleware when the user is a student', () => {
 
     it('should return a permission denied error if the user provided a valid token but is not enrolled in the course', (done) => {
         
-        const socket = io('http://localhost:3000/courses/' + course._id + '/classroom?token=' + studentToken);
+        const socket = io('http://localhost:3000/courses/' + course._id + '/classroom?token=' + token);
 
         socket.on('error', (error) => {
             expect(error).to.be.equal('Permission Denied Error');
@@ -111,10 +95,10 @@ describe('authSocket Middleware when the user is a student', () => {
 
     it('should connect successfully if the user provided a valid token and is enrolled in the course', (done) => {
 
-        student.courses.push(course._id);
-        student.save()
+        instructor.courses.push(course._id);
+        instructor.save()
             .then(function() {
-                const socket = io('http://localhost:3000/courses/' + course._id + '/classroom?token=' + studentToken);
+                const socket = io('http://localhost:3000/courses/' + course._id + '/classroom?token=' + token);
 
                 socket.on('connect', () => {
                     done();
