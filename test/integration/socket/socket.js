@@ -10,6 +10,7 @@ const { expect } = require('chai');
 const shortId = require('shortid');
 const io = require('socket.io-client');
 
+/* These tests are not that good but will be fixed when I learn more about mocha and how to test event listeners */
 describe('classroom socket', () => {
 
     let server;
@@ -48,6 +49,22 @@ describe('classroom socket', () => {
 
         await course.save();
 
+        // Create a question and assign it to the course
+        question = new Question({
+            title: 'Lesson 1',
+            type: 'Multiple Choice',
+            question: 'What is 5+5?',
+            mark: 2,
+            participationMark: 0,
+            course: course._id,
+            questionDetails: {
+                choices: ['10', '5', '0', '1'],
+                answer: 0
+            }
+        });
+        
+        await question.save();
+
         // Create a student
         student1 = await createStudent('2');
         user = await mocksdk.auth().getUser('2');
@@ -64,27 +81,6 @@ describe('classroom socket', () => {
         await Instructor.deleteMany({});
         await Student.deleteMany({});
         await Course.deleteMany({});
-    });
-
-    beforeEach(async () => {
-        // Create a question
-        question = new Question({
-            title: 'Lesson 1',
-            type: 'Multiple Choice',
-            question: 'What is 5+5?',
-            mark: 2,
-            participationMark: 0,
-            course: course._id,
-            questionDetails: {
-                choices: ['10', '5', '0', '1'],
-                answer: 0
-            }
-        });
-        
-        await question.save();
-    });
-
-    afterEach(async () => {
         await Question.deleteMany({});
         await Classroom.deleteMany({});
     });
@@ -97,6 +93,8 @@ describe('classroom socket', () => {
             .send({
                 questionId: question._id
             });
+        
+        expect(res.status).to.be.equal(200);
         
         studSock1 = io('http://localhost:3000/courses/' + course._id + '/classroom?token=' + studToken1);
         studSock1.on('question', (q) => {
@@ -119,6 +117,28 @@ describe('classroom socket', () => {
             .send({
                 questionId: question._id
             });
+        
+        expect(res.status).to.be.equal(200);
+    });
+
+    it('when a student answers, the instructor should recieve an event of how many students have answered', async () => {
+
+        instSock = io('http://localhost:3000/courses/' + course._id + '/classroom?token=' + instToken);
+        instSock.on('answer', (studentsAnswered) => {
+            console.log('Students Answered: ' + studentsAnswered);
+        });
+
+        const res = await request(server)
+            .post('/courses/' + course._id + '/classroom/answer')
+            .set('Authorization', 'Bearer ' + studToken1)
+            .send({
+                questionId: question._id,
+                answer: {
+                    answer: 0
+                }
+            });
+        
+        expect(res.status).to.be.equal(200);
     });
 });
 
