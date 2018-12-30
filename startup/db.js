@@ -5,7 +5,7 @@ const logger = require('../logger');
 module.exports = function() {
     const db = config.get('db');
     
-    mongoose.set('useCreateIndex', true);
-    mongoose.connect(db, { useNewUrlParser: true })
-        .then(() => logger.info(`Connected to ${db}...`));
+    mongoose.connect(db, { useNewUrlParser: true, auth: { authSource: 'admin' } })
+        .then(() => logger.info(`Connected to ${db}...`))
+        .catch((err) => logger.error(err));
 }
