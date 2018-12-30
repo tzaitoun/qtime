@@ -12,7 +12,8 @@ require('./startup/objectIdValidation')();
 require('./startup/routes')(app, nsp);
 require('./startup/socket')(nsp);
 
+const logger = require('./logger');
 const port = process.env.PORT || 3000;
-server.listen(port, () => console.log(`Listening on port ${port}...`));
+server.listen(port, () => logger.info(`Listening on port ${port}...`));
 
 module.exports = server;
