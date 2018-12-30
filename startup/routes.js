@@ -8,7 +8,7 @@ const courses = require('../routes/courses');
 const errorHandler = require('../middleware/errorHandler');
 
 module.exports = function(app, nsp) {
-    app.use(helmet);
+    app.use(helmet());
     app.use(express.json());
     app.use(function(req, res, next) {
         req.nsp = nsp;
